@@ -1,0 +1,21 @@
+title: Chloe's Blog
+name: "Chloe's Tech Journey"
+author: Chloe Nguyen
+baseurl: "/chloe-tech"
+description: Summarize my learning journey
+profile_url: " "
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+excerpt_separator: <!--more-->
+plugins:
+  - jekyll-feed
+  - jekyll-archives
+exclude:
+  - Gemfile
+  - Gemfile.lock
+kramdown:
+  input: GFM
+  auto_ids: true
+  syntax_highlighter: rouge
