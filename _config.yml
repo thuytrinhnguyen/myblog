@@ -1,9 +1,9 @@
-title: Chloe's Blog
+title: Chloe's Tech Journey
 name: "Chloe's Tech Journey"
 author: Chloe Nguyen
-baseurl: "/chloe-tech"
+baseurl: "/"
 description: Summarize my learning journey
-profile_url: " "
+profile_url: "https://thuytrinhnguyen.github.io"
 
 # Build settings
 markdown: kramdown
