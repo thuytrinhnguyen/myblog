@@ -26,7 +26,7 @@ These days, popular programming frameworks offer users convenient functions to c
 
 We will construct a minimal Neural network with one hidden layer and a 10-class softmax classifier output layer. My advice is to draft out the formulas and dimensions of all parameters beforehand which will help us debug the codes easier. The plan is to __(1)__ load the dataset, __(2)__ build the forward path, __(3)__ code the backward path and __(4)__ combine everything into a model. Along the way, we will define some helper functions.
 
-{% figure caption:"Fig. .The minimal Neural Network has one hidden layer and a softmax classifier." %}
+{% figure caption:"Fig. 2. The minimal Neural Network has one hidden layer and a softmax classifier." %}
 ![Neural Network Architecture]({{'/assets/images/mnist-tutorial-nn-ach.png'}})
 {% endfigure %}
 
@@ -38,9 +38,9 @@ You can download __MNIST dataset__ from various sources, I download mine from [K
 ### Step 2: Load the data
 Firstly, we need to separate __features (X)__ and __label (Y)__ and perform some data preprocessing operations on them. The label is the first column followed by 784 columns of image pixels (i.e. X are 28x28 images) in both the training and testing sets. The training set has 60,000 entries while the testing set has 10,000. 
 
-Because X are grayscale images, the pixel values vary greatly from 0 to 255, we can normalize them by dividing all pixels by 255. On the other hand, we need to convert the labels into one-hot vectors to classify the 10 digits (0 - 9). I will summarize the process in Fig. 2, the same operations are applied to the testing dataset. 
+Because X are grayscale images, the pixel values vary greatly from 0 to 255, we can normalize them by dividing all pixels by 255. On the other hand, we need to convert the labels into one-hot vectors to classify the 10 digits (0 - 9). I will summarize the process in Fig. 3, the same operations are applied to the test set. 
  
-{% figure caption:"Fig. 2. demonstrates data preparation and dimensions of X and Y in MNIST training dataset." %}
+{% figure caption:"Fig. 3. demonstrates data preparation and dimensions of X and Y in MNIST training dataset." %}
 ![Data]({{'/assets/images/mnist-tutorial-nn-data.png'}})
 {% endfigure %}
 
@@ -119,9 +119,15 @@ def predict(X, Y, W, b, L):
 
 ### Step 4: Forward path
 
-To calculate the forward path, we calculate Z of layer [l] using the formula:
+To calculate the forward path, we calculate Z and A of layer $$[l]$$ using the formula:
 
 $$Z^{[l]} = W^{[l]} \times A^{[l-1]} + b^{[l]} $$
+
+$$A^{[l]} = g^{[l]}(Z^{[l]}) $$
+
+where $$g^{[l]}$$ is the activation of layer $$l$$ (ReLU and Softmax).
+
+We store Z and A as dictionaries to access them later for the backward path and to make prediction. Remember that our model only has one 50-unit hidden layer and a 10-class softmax layer, we define <code>layers = [50, 10]</code>. Therefore, we set the first previous <code>A_prev = X</code>. For the iteration, we will pass in <code>L = len(layers)</code>.
 
 ```python
 def forward(X, W, b, L):
@@ -138,7 +144,32 @@ def forward(X, W, b, L):
     return Z, A
 ```
 
-### Step : Backward path
+### Step 5: Backward path
+
+To update the parameters (W and b), we need to find the derivative of the loss function with respect to each of the parameter. This can be done using the following formulas:
+
+$$
+dZ^{[L]} = A^{[L]} - Y
+$$
+
+$$
+dZ^{[l]} = dA^{[l]} \times g^{[l]'}(Z^{[l]})
+$$
+
+$$
+dW^{[l]} = \frac{1}{m} dZ^{[l]} \times A^{[l-1]}.T
+$$
+
+$$
+db^{[l]} = \frac{1}{m} sum(dZ^{[l]})
+$$
+
+$$
+dA^{[l]} = W^{[l+1]}.T \times dZ^{[l+1]}  
+$$
+
+Because <code>layers = [50,10]</code>, <code>range(L)</code> means to run from 0 to L-1 (i.e. layer 0 (hidden layer) and 1 (output layer)). The reversed sequence will access data from layer L-1 to 0 as follows: 
+
 ```python
 def backward(X, Y, Z, A, W, L, m):
     dA, dZ, dW, db = {}, {}, {}, {}
@@ -157,12 +188,61 @@ def backward(X, Y, Z, A, W, L, m):
     return dW, db
 ```
 
-### Step : Putting it all together into the model
-```python
+### Step 6: Putting it all together 
 
+Now we have had all the components required to build the model. The objective is to train the model with training data and use the optimal weights and biases to make prediction for the testing data. To capture the optimal parameters, we choose those that minimize the test set cost. Later, we use these optimal values and run <code>predict</code> function to calculate Test Accuracy.
+
+__Side Note:__ 
+
+* When training the model for hundreds or thousands of iterations, it is handy to have some visualization assistance which shows a progress bar and estimates the remaining time to complete training. In this post, I imported <blue><code>tqdm</code></blue> library for that purpose.
+
+* You can easily experiment with other fully-connected neural network architectures by changing <code>layers = [ ]</code>.
+
+
+```python
+def train():
+    X_train, Y_train, X_test, Y_test, Y_train_idx, Y_test_idx = load_data()
+
+    layers = [50, 10]
+    epoch = 2000
+    lr = 0.05
+
+    L = len(layers)
+    W, b = init_params(X_train, layers)
+    m = X_train.shape[1]
+    n = X_test.shape[1]
+    pbar = tqdm(range(epoch))
+    min_epoch = 0
+    min_cost = 100
+    W_opt = 0
+    b_opt = 0
+
+    for i in pbar:                            
+        Z, A = forward(X_train, W, b, L)
+        dW, db = backward(X_train, Y_train, Z, A, W, L, m)
+        W, b = update_params(W, b, dW, db, L, lr)
+        cost_train = compute_cost(A[L - 1], Y_train, m)
+
+        if i%5 == 0:
+            Z_test, A_test = forward(X_test, W, b, L)
+            cost_test = compute_cost(A_test[L - 1], Y_test, n)
+            if cost_test < min_cost:
+                min_cost = cost_test
+                min_epoch = i
+                W_opt = copy(W)
+                b_opt = copy(b)
+        pbar.set_description(f"Cost Train = {round(cost_train, 4)}  -  Cost Test = {round(cost_test, 4)}")
+
+    test_acc = predict(X_test, Y_test_idx, W_opt, b_opt, L)
+    print(f'Optimal Epoch: {min_epoch}  -  Test Accuracy = {round(test_acc, 4)}')
 ```
 
 ## Wrap-up Highlights
+
+Voila! Now you know how to construct a minimal Neural Network to predict handwritten digits. Although our model is simplistic, the results are pretty decent with __94% accuracy__ on the test data. This post is a stepping stone for you to customize your model. In reality, people rarely have to code from scratch thanks to the convenience programming frameworks offer. Hopefully, this sneakpeek into how basic functions work behind the scene can be useful to you in some way.
+
+Full source code is available on my [Github]().
+
 
 ## References
 
