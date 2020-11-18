@@ -10,6 +10,8 @@ tags: regression least-squares gradient-descent
 <!--more-->
 It is human nature to be certain about our future and to make predictions based on existing clues. Hence, the idea of studying about the __association__ among subjects interests us. The first entry of the blog is dedicated to such an idea, it is about one basic concept in supervised learning: __Simple Linear Regression__.
  
+<mark><b>Highlights</b></mark> 
+
 {: class="table-of-content"}
 * TOC
 {:toc}

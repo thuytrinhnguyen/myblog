@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "MNIST Tutorial - Neural Networks approach from scratch in Python"
-date: 2020-11-08 14:08
+date: 2020-11-11 14:08
 category: deeplearning
 tags: neural-networks deeplearning mnist
 ---
