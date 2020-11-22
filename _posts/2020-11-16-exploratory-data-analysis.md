@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Exploratory Data Analysis in Python"
-date: 2020-11-11 14:08
+date: 2020-11-16 14:08
 category: data-analysis
 tags: data-analysis visualization 
 ---
