@@ -22,15 +22,54 @@ __Check and fix dtypes__
 
 - Cross check with `data_description.txt`
 
-- Change the following columns from `int64` or `float64` to `category`:
-    - `MSSubClass`
-    - `YearBuilt`
-    - `YearRemodAdd`
-    - `GarageYrBlt`
-    - `MoSold`
-    - `YrSold`
-    
-- Change columns that are in `object` type into `category` type
+- Categorical columns:
+
+\begin{enumerate}
+  \item MSSubClass
+  \item MSZoning
+  \item Street
+  \item Alley
+  \item LotShape
+  \item LandContour
+  \item Utilities
+  \item LotConfig
+  \item LandSlope
+  \item Neighborhood
+  \item Condition1
+  \item Condition2
+  \item BldgType
+  \item HouseStyle
+  \item RoofStyle
+  \item RoofMatl
+  \item Exterior1st
+  \item Exterior2nd
+  \item MasVnrType
+  \item ExterQual
+  \item ExterCond
+  \item Foundation
+  \item BsmtQual
+  \item BsmtCond
+  \item BsmtExposure
+  \item BsmtFinType1
+  \item BsmtFinType2
+  \item Heating
+  \item HeatingQC
+  \item CentralAir
+  \item Electrical
+  \item KitchenQual
+  \item Functional
+  \item FireplaceQu
+  \item GarageType
+  \item GarageFinish
+  \item GarageQual
+  \item GarageCond
+  \item PavedDrive
+  \item PoolQC
+  \item Fence
+  \item MiscFeature
+  \item SaleType
+  \item SaleCondition
+\end{enumerate}
 
 
 __Check distribution of numerical fields__
