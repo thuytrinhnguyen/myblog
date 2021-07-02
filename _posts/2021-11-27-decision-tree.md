@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Decision Tree"
-date:   2020-11-27 15:44
+date:   2021-11-27 15:44
 categories: supervised-learning
 tags: decision-tree classification regression
 ---

@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "Kaggle Challenge - Predict Housing Prices"
-date:   2020-11-29 15:46
+date:   2021-11-29 15:46
 categories: 
 tags: kaggle
 ---
